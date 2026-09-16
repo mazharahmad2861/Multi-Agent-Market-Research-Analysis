@@ -574,7 +574,7 @@ multi-agent-market-research/
 ## 1. Clone the repository
 
 ```bash
-git clone https://github.com/mazharahmad2861/multi-agent-market-research-analysis
+git clone https://github.com/mazharahmad2861/Multi-Agent-Market-Research-Analysis
 cd multi-agent-market-research-analysis
 ```
 
