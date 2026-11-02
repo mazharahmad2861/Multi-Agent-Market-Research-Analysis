@@ -394,7 +394,7 @@ This creates a controlled multi-agent workflow rather than simply giving one LLM
 | Python REPL          | Code execution and calculations           |
 | Matplotlib           | Visualization                             |
 | Gradio               | Web interface                             |
-| CSV                  | Historical stock-data storage             |
+
 
 ---
 
@@ -411,14 +411,7 @@ multi-agent-market-research/
 ├── main.py
 ├── agents.py
 ├── tools.py
-│
-└── data/
-    ├── AAPL.csv
-    ├── AMZN.csv
-    ├── META.csv
-    ├── MSFT.csv
-    ├── NFLX.csv
-    └── TSLA.csv
+
 ```
 
 ---
@@ -620,36 +613,25 @@ Coordinating multiple specialized agents to complete a larger task.
 
 # ⚠️ Limitations
 
-### 1. Historical CSV Data
+### 1. Alpha Vantage API Limits
 
-The project currently doesn't retrieve real-time market data.
+The project depends on the Alpha Vantage API for stock data.
 
-The stock-data tool reads local CSV files.
+API limits depend on the API plan being used.
 
-### 2. Dataset Coverage
+If the API limit is reached, the application returns an appropriate error instead of pretending that data was successfully retrieved.
 
-Only the companies for which CSV files exist can be queried.
 
-Currently:
 
-```text
-AAPL
-AMZN
-META
-MSFT
-NFLX
-TSLA
-```
-
-### 3. Python Execution
+### 2. Python Execution
 
 The Python REPL executes generated Python code. Arbitrary code execution should not be exposed directly to untrusted users in a production environment without appropriate isolation and security controls.
 
-### 4. Wikipedia Retrieval
+### 3. Wikipedia Retrieval
 
 Wikipedia search results depend on the search query and available Wikipedia content.
 
-### 5. LLM Routing
+### 4. LLM Routing
 
 Agent routing is influenced by the LLM and system prompts. Strong tool-use instructions are therefore important for reliable behavior.
 
@@ -659,23 +641,10 @@ Agent routing is influenced by the LLM and system prompts. Strong tool-use instr
 
 The project can be extended significantly.
 
-## 1. Live Stock Data
-
-Replace static CSV files with a market-data API.
-
-```text
-Current:
-
-CSV → Pandas → Agent
-
-Future:
-
-Market API → Pandas → Agent
-```
 
 ---
 
-## 2. More Financial Tools
+## 1. More Financial Tools
 
 Add tools for:
 
@@ -693,7 +662,7 @@ Cash flow
 
 ---
 
-## 3. Additional Specialized Agents
+## 2. Additional Specialized Agents
 
 For example:
 
@@ -708,7 +677,7 @@ For example:
 
 ---
 
-## 4. News Research Agent
+## 3. News Research Agent
 
 Add a specialized agent for:
 
@@ -721,27 +690,8 @@ Corporate announcements
 
 ---
 
-## 5. Database Integration
 
-Instead of CSV files:
-
-```text
-CSV
- ↓
-PostgreSQL
-```
-
-or:
-
-```text
-CSV
- ↓
-DuckDB
-```
-
----
-
-## 6. Persistent Memory
+## 4. Persistent Memory
 
 The current application can treat each query independently.
 
@@ -785,16 +735,7 @@ Possible deployment architecture:
    Data Services       Compute Service
 ```
 
-Potential technologies:
 
-```text
-FastAPI
-Docker
-AWS
-PostgreSQL
-Redis
-LangSmith
-```
 
 ---
 
@@ -837,11 +778,10 @@ TSLA
 
 ### Step 3 — Stock Tool
 
-Loads:
+The stock tool calls:
+Alpha Vantage API
 
-```text
-data/TSLA.csv
-```
+and converts the returned data into a Pandas DataFrame.
 
 and retrieves the requested data.
 
@@ -886,7 +826,7 @@ Combines the results into the final response.
                   stock_data_tool
                           │
                           ▼
-                      TSLA.csv
+                      stock_data
                           │
                           ▼
                      RESEARCHER
