@@ -19,34 +19,37 @@ Traditional LLM applications often rely on a single general-purpose agent that i
 This project takes a **multi-agent approach** by separating these responsibilities into specialized agents.
 
 ```text
-                         ┌───────────────┐
-                         │     USER      │
-                         └───────┬───────┘
-                                 │
-                                 ▼
-                     ┌─────────────────────┐
-                     │     SUPERVISOR      │
-                     │        AGENT        │
-                     │                     │
-                     │ Task Understanding  │
-                     │ Task Routing        │
-                     │ Orchestration       │
-                     └──────────┬──────────┘
+                              USER
                                 │
-                    ┌───────────┴───────────┐
-                    │                       │
-                    ▼                       ▼
-           ┌─────────────────┐     ┌─────────────────┐
-           │    RESEARCHER   │     │     ANALYST     │
-           │      AGENT      │     │      AGENT      │
-           └────────┬────────┘     └────────┬────────┘
-                    │                       │
-              ┌─────┴─────┐                 │
-              ▼           ▼                 ▼
-         Wikipedia    Stock CSV          Python REPL
+                                ▼
+                       ┌─────────────────┐
+                       │   SUPERVISOR    │
+                       │      AGENT      │
+                       │                 │
+                       │ Task Routing    │
+                       │ Orchestration   │
+                       │ Delegation      │
+                       └────────┬────────┘
+                                │
+                 ┌──────────────┴──────────────┐
+                 │                             │
+                 ▼                             ▼
+        ┌─────────────────┐           ┌─────────────────┐
+        │    RESEARCHER   │           │     ANALYST     │
+        │      AGENT      │           │      AGENT      │
+        └────────┬────────┘           └────────┬────────┘
+                 │                             │
+          ┌──────┴──────┐                      ▼
+          ▼             ▼               ┌──────────────┐
+      Wikipedia    Alpha Vantage        │ Python REPL  │
+                         │              └──────┬───────┘
+                         ▼                     │
+                    Stock Data                 ▼
+                                      Calculations / Charts
+                        
 ```
 
-The supervisor decides which agent should handle a request and can coordinate multiple agents when a task requires both data retrieval and analysis.
+The supervisor can delegate a task to one agent or coordinate multiple agents when a request requires both research and analysis.
 
 ---
 
@@ -56,11 +59,11 @@ The supervisor decides which agent should handle a request and can coordinate mu
 * Supervisor-based agent orchestration
 * Specialized Researcher and Analyst agents
 * Wikipedia-based company research
-* Historical stock-data retrieval from CSV files
+* Historical stock-data retrieval using Alpha Vantage API
 * Pandas-based data processing
 * Python-powered calculations
 * Stock-data visualization
-* Groq-powered LLM inference
+* OpenAI LLM inference
 * Interactive Gradio web interface
 * Independent query → answer workflow
 * Tool-based agent execution
@@ -102,7 +105,7 @@ The application consists of four major layers.
            │                         │
       ┌────┴────┐                    ▼
       ▼         ▼               ┌──────────────┐
- Wikipedia  Stock CSV           │ Python REPL  │
+ Wikipedia  Alpha Vintage       │ Python REPL  │
                                 └──────────────┘
 ```
 
@@ -149,7 +152,7 @@ Stock Data Tool
 
         ↓
 
-TSLA.csv
+Alpha Vintage API
 
         ↓
 
@@ -227,30 +230,11 @@ Researcher
 
 ### 📈 Stock Data Tool
 
-The stock-data tool retrieves historical stock information from local CSV files.
+The stock-data tool retrieves stock information from Alpha Vintage API.
 
-Supported companies:
 
-```text
-Apple       → AAPL
-Amazon      → AMZN
-Meta        → META
-Microsoft   → MSFT
-Netflix     → NFLX
-Tesla       → TSLA
-```
 
-The project stores these datasets under:
 
-```text
-data/
-├── AAPL.csv
-├── AMZN.csv
-├── META.csv
-├── MSFT.csv
-├── NFLX.csv
-└── TSLA.csv
-```
 
 The tool accepts:
 
@@ -269,7 +253,16 @@ num_days = 30
 The tool loads:
 
 ```text
-data/TSLA.csv
+The tool retrieves the latest 30 available trading days and provides:
+- Open price
+- High price
+- Low price
+- Closing price
+- Trading volume
+- Highest closing price
+- Lowest closing price
+- Average closing price
+- Trading period
 ```
 
 and returns the requested historical data.
@@ -347,145 +340,6 @@ The agent can therefore transform retrieved stock data into useful analytical re
 
 ---
 
-# 🔄 Multi-Agent Workflow
-
-### Simple Research Query
-
-Example:
-
-```text
-Who is Apple's CEO?
-```
-
-Workflow:
-
-```text
-User
- ↓
-Supervisor
- ↓
-Researcher
- ↓
-Wikipedia Tool
- ↓
-Researcher
- ↓
-Supervisor
- ↓
-Final Answer
-```
-
-Only the Researcher Agent is required.
-
----
-
-### 📈 Stock Retrieval Query
-
-Example:
-
-```text
-Show Tesla's stock performance for the last 30 days.
-```
-
-Workflow:
-
-```text
-User
- ↓
-Supervisor
- ↓
-Researcher
- ↓
-Stock Data Tool
- ↓
-TSLA.csv
- ↓
-Researcher
- ↓
-Supervisor
- ↓
-Final Answer
-```
-
----
-
-### 🧮 Stock Analysis Query
-
-Example:
-
-```text
-Calculate the highest and lowest closing price
-of Apple over the last 30 days.
-```
-
-Workflow:
-
-```text
-User
- ↓
-Supervisor
- ↓
-Researcher
- ↓
-Stock Data Tool
- ↓
-AAPL.csv
- ↓
-Research Data
- ↓
-Supervisor
- ↓
-Analyst
- ↓
-Python
- ↓
-Calculation
- ↓
-Supervisor
- ↓
-Final Answer
-```
-
----
-
-### 📉 Visualization Query
-
-Example:
-
-```text
-Create a chart showing Tesla's stock price
-over the last 30 days.
-```
-
-Workflow:
-
-```text
-User
- ↓
-Supervisor
- ↓
-Researcher
- ↓
-Stock Data Tool
- ↓
-TSLA.csv
- ↓
-Supervisor
- ↓
-Analyst
- ↓
-Python REPL
- ↓
-Matplotlib
- ↓
-Chart
- ↓
-Supervisor
- ↓
-User
-```
-
----
 
 # 🔗 Agent Handoffs
 
