@@ -42,10 +42,11 @@ def chat_with_agents(message, history):
 
 demo = gr.ChatInterface(
     fn=chat_with_agents,
-    title="Supervisor Multi-Agent System",
+    title="Multi-Agent Market Research Assistant",
     description=(
-        "Ask questions about companies, "
-        "stock performance, or request visualizations."
+        "Research companies, analyze recent stock performance, "
+        "perform data analysis, and generate visualizations "
+        "using a supervisor-based multi-agent system."
     ),
     textbox=gr.Textbox(
         placeholder="Ask something...",

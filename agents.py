@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 
-from langchain_groq import ChatGroq
+#from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 
 from langgraph_supervisor import create_supervisor
@@ -24,9 +25,11 @@ load_dotenv()
 # LLM
 
 
-llm = ChatGroq(
-    model="openai/gpt-oss-120b",
-    temperature=0,
+#llm = ChatGroq(model="openai/gpt-oss-120b", temperature=0,)
+
+llm = ChatOpenAI(
+    model="gpt-5.4-mini",
+    temperature=0
 )
 
 
